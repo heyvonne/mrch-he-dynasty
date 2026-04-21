@@ -3,71 +3,76 @@ using System.Collections;
 
 public class NPCMovement : MonoBehaviour
 {
-    public Transform[] waypoints;   // 包含 Sphere + Mid点
+    public Transform[] waypoints;
     public float speed = 2f;
+    public float waitTime = 4f;
 
-    private int currentTarget = 0;
-    private bool canMove = false;
+    private int currentIndex = 0;
+    private bool isMoving = false;
 
-    public void StartMovement()
+    private bool npcArrived = false;
+    private bool playerArrived = false;
+
+    // 👉 哪些点需要停（填 sphere7/8/9 的 index）
+    public int[] stopPointIndices;
+
+    public void StartMoving()
     {
-        gameObject.SetActive(true);
-
-        transform.position = waypoints[0].position;
-
-        currentTarget = 1;
-
-        StartCoroutine(MoveRoutine());
+        if (!isMoving)
+        {
+            StartCoroutine(MoveRoutine());
+        }
     }
 
     IEnumerator MoveRoutine()
     {
-        while (currentTarget < waypoints.Length)
+        isMoving = true;
+
+        while (currentIndex < waypoints.Length)
         {
-            Transform target = waypoints[currentTarget];
+            Transform target = waypoints[currentIndex];
 
-            // ⭐ 移动（防穿墙 + 不贴近）
-            while (Vector3.Distance(transform.position, target.position) > 1.2f)
+            // 移动
+            while (Vector3.Distance(transform.position, target.position) > 0.2f)
             {
-                Vector3 direction = (target.position - transform.position).normalized;
-
-                float checkDistance = 0.8f;
-                Ray ray = new Ray(transform.position + Vector3.up * 0.5f, direction);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, checkDistance))
-                {
-                    if (!hit.collider.CompareTag("Waypoint"))
-                    {
-                        yield return null;
-                        continue;
-                    }
-                }
-
-                transform.position += direction * speed * Time.deltaTime;
-
+                Vector3 dir = (target.position - transform.position).normalized;
+                transform.position += dir * speed * Time.deltaTime;
                 yield return null;
             }
 
-            // ⭐ 只有Sphere才触发
-            SphereTrigger trigger = target.GetComponent<SphereTrigger>();
+            npcArrived = true;
 
-            if (trigger != null)
+            // 👉 如果是关键点（7/8/9）
+            if (IsStopPoint(currentIndex))
             {
-                trigger.NPCArrived();
+                // 等玩家也到
+                yield return new WaitUntil(() => playerArrived);
 
-                // ⭐ 等待（只有Sphere需要等）
-                canMove = false;
-                yield return new WaitUntil(() => canMove);
+                // 等对话结束
+                yield return new WaitForSeconds(waitTime);
+
+                playerArrived = false;
             }
 
-            // ⭐ Mid点不会停，直接走
-            currentTarget++;
+            npcArrived = false;
+            currentIndex++;
         }
+
+        isMoving = false;
     }
 
-    public void AllowMove()
+    bool IsStopPoint(int index)
     {
-        canMove = true;
+        foreach (int i in stopPointIndices)
+        {
+            if (i == index) return true;
+        }
+        return false;
+    }
+
+    // 👉 Sphere调用
+    public void PlayerArrivedAtPoint(int sphereIndex)
+    {
+        playerArrived = true;
     }
 }

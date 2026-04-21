@@ -5,6 +5,11 @@ public class ChoiceManager : MonoBehaviour
     public NPCMovement npc;
     public GameObject wrongText;
 
+    public SphereTrigger sphereTrigger;
+    public Transform spawnPoint; // sphere6
+
+    private bool hasChosenCorrect = false;
+
     public void ChooseA()
     {
         ShowWrong();
@@ -17,13 +22,22 @@ public class ChoiceManager : MonoBehaviour
 
     public void ChooseC()
     {
-        // 正确答案
+        if (hasChosenCorrect) return;
+        hasChosenCorrect = true;
+
         if (npc != null)
         {
-            npc.StartMovement();
+            npc.transform.position = spawnPoint.position; // ⭐ 在6生成
+            npc.gameObject.SetActive(true);
+            npc.StartMoving();
         }
 
-        gameObject.SetActive(false); // 关闭按钮
+        if (sphereTrigger != null)
+        {
+            sphereTrigger.Advance();
+        }
+
+        gameObject.SetActive(false);
     }
 
     void ShowWrong()
@@ -31,7 +45,8 @@ public class ChoiceManager : MonoBehaviour
         if (wrongText != null)
         {
             wrongText.SetActive(true);
-            Invoke(nameof(HideWrong), 4f);
+            CancelInvoke(nameof(HideWrong));
+            Invoke(nameof(HideWrong), 2f);
         }
     }
 

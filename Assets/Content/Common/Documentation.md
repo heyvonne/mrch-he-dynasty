@@ -28,11 +28,13 @@ A single component that provides multiple types of spatial and lifecycle event t
 ### Collider Trigger
 
 - **Requirement**: The same GameObject must have a `Collider` component with `Is Trigger` enabled. A warning is logged in the Console if this is missing.
+
 - Variables:
-
+  
   - `Use Collider Trigger` (boolean): Enables the trigger functionality.
-- Events:
 
+- Events:
+  
   - `On Trigger First Enter`: Fires **once**, the first time the player enters the collider. Resets when the scene reloads.
   - `On Trigger Enter`: Fires every time the player enters the collider.
   - `On Trigger Exit`: Fires every time the player exits the collider.
@@ -40,12 +42,14 @@ A single component that provides multiple types of spatial and lifecycle event t
 ### Distance Trigger
 
 - **Requirement**: None.
-- Variables:
 
+- Variables:
+  
   - `Use Distance Trigger` (boolean): Enables the trigger functionality.
   - `Distance` (float, meters): The radius within which events are triggered. Be aware that the physical-to-scanned-map scale ratio may differ — test in your scanned environment before finalizing values.
-- Events:
 
+- Events:
+  
   - `On Distance First Enter`: Fires **once**, the first time the player enters the distance range. Resets when the scene reloads.
   - `On Distance Enter`: Fires every time the player enters the distance range.
   - `On Distance Exit`: Fires when the player moves outside the distance range.
@@ -53,13 +57,15 @@ A single component that provides multiple types of spatial and lifecycle event t
 ### LookAt Trigger
 
 - **Requirement**: None.
-- Variables:
 
+- Variables:
+  
   - `Use LookAt Trigger` (boolean): Enables the trigger functionality.
   - `Look At Angle` (float, degrees): The maximum angle between the player's forward direction and the direction toward this object for the "looking at" condition to be met. A smaller value means the player must aim their gaze more precisely at the object.
   - `Look At Distance` (float, meters): The maximum distance for the look-at check to be active. Set to **0 for unlimited range** (no distance restriction applies).
-- Events:
 
+- Events:
+  
   - `On Look At First Enter`: Fires **once** when both conditions are met (within distance AND within angle) for the first time. Resets when the scene reloads.
   - `On Look At Enter`: Fires each time both conditions are met.
   - `On Look At Distance Exit`: Fires when the player exits the `Look At Distance` range. The angle condition is **not** checked on exit — only distance matters here.
@@ -75,19 +81,21 @@ All lifecycle event triggers are grouped under a single `Use Events Triggers` to
 #### Start Trigger
 
 - Variables:
-
+  
   - `Use Start Trigger` (boolean): Enables this sub-trigger.
-- Events:
 
+- Events:
+  
   - `On Start`: Fires during `Start()` — once, on the first frame the script is active, before any `Update()` calls. [(ref)](https://docs.unity3d.com/ScriptReference/MonoBehaviour.Start.html)
 
 #### On Enable Trigger
 
 - Variables:
-
+  
   - `Use On Enable Trigger` (boolean): Enables this sub-trigger.
-- Events:
 
+- Events:
+  
   - `On Enable`: Fires during `OnEnable()` — each time the GameObject is activated or re-enabled. [(ref)](https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnEnable.html)
 
 #### Update Trigger
@@ -95,19 +103,21 @@ All lifecycle event triggers are grouped under a single `Use Events Triggers` to
 > ⚠️ Use this sparingly. Firing a UnityEvent every frame is expensive and usually unnecessary — consider Distance or LookAt triggers instead.
 
 - Variables:
-
+  
   - `Use Update Trigger` (boolean): Enables this sub-trigger.
-- Events:
 
+- Events:
+  
   - `On Update`: Fires every frame during `Update()` while the MonoBehaviour is enabled. [(ref)](https://docs.unity3d.com/ScriptReference/MonoBehaviour.Update.html)
 
 #### On Disable Trigger
 
 - Variables:
-
+  
   - `Use On Disable Trigger` (boolean): Enables this sub-trigger.
-- Events:
 
+- Events:
+  
   - `On Disable`: Fires during `OnDisable()` — when the GameObject is deactivated or the component is destroyed. [(ref)](https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnDisable.html)
 
 ---
@@ -135,7 +145,7 @@ The Unity Event Library is a centralized store for named events and event sequen
 A single named UnityEvent with an optional delay.
 
 - Variables:
-
+  
   - `eventName` (string): A unique name to identify this event. Used as the key when calling `TriggerEventByName`.
   - `waitBeforeInvoke` (float, seconds): Delay before the event fires. The calling code waits this many seconds before invoking the UnityEvent.
   - `unityEvent` (UnityEvent): The Unity event to invoke.
@@ -147,7 +157,7 @@ A named list of `NamedUnityEvent` entries that fire one after another, in order.
 > ⚠️ Events in a sequence run **sequentially, not in parallel**. Each event waits for the previous one's `waitBeforeInvoke` delay to finish before starting.
 
 - Variables:
-
+  
   - `sequenceName` (string): A unique name to identify this sequence. Used as the key when calling `TriggerSequenceByName`.
   - `namedUnityEventSequence` (NamedUnityEvent[]): The ordered list of events. Each entry can have its own `waitBeforeInvoke` delay before it fires.
 
@@ -688,6 +698,7 @@ A component for audio fade in and fade out.
 #### Inspector Variables
 
 ##### Audio Source
+
 - **Type**: AudioSource
 - **Description**: The target audio source controlled by the script. It will fetch the AudioSource on the same GameObject if null.
 
@@ -720,6 +731,7 @@ A component for audio fade in and fade out.
 ##### StopImmediate()
 
 - **Description**: Immediately stops any active fade and the audio source.
+
 ---
 
 ### EventBroadcaster

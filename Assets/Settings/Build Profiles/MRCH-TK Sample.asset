@@ -18,7 +18,7 @@ MonoBehaviour:
   m_PlatformId: ad48d16a66894befa4d8181998c3cb09
   m_PlatformBuildProfile:
     rid: 1643849195645829315
-  m_OverrideGlobalSceneList: 1
+  m_OverrideGlobalSceneList: 0
   m_Scenes:
   - m_enabled: 1
     m_path: Assets/Samples/MRCH Toolkit/2.0.0/MRCH Toolkit Samples/Scenes/MRCH-Sample.unity

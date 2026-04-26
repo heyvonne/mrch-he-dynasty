@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class SphereTrigger : MonoBehaviour
 {
@@ -6,7 +7,7 @@ public class SphereTrigger : MonoBehaviour
     public static int currentIndex = 0;
 
     [Header("Dialogue")]
-    public string[] dialogueLines;
+    public DialogueLine[] dialogueLines;
     public DialogueClickController dialogueController;
 
     [Header("Choice (only for sphere6)")]
@@ -14,6 +15,10 @@ public class SphereTrigger : MonoBehaviour
 
     [Header("NPC Sync")]
     public NPCMovement npc;
+
+    [Header("Popup Panel (auto show & hide)")]
+    public GameObject popupPanel;          // ← 拖入 ShenbaoPanel
+    public float popupDuration = 10f;      // ← 显示时长（秒）
 
     [Header("NEW: Extendable Events (IMPORTANT)")]
     public SphereTriggerEvents events;
@@ -38,7 +43,7 @@ public class SphereTrigger : MonoBehaviour
             }
 
             // =========================
-            // ⭐ NEW：扩展事件（核心）
+            // ⭐ 扩展事件
             // =========================
             if (events != null && events.onEnter != null)
             {
@@ -46,7 +51,15 @@ public class SphereTrigger : MonoBehaviour
             }
 
             // =========================
-            // ② Dialogue逻辑（不改）
+            // ④ Popup Panel（新增）
+            // =========================
+            if (popupPanel != null)
+            {
+                StartCoroutine(ShowPopupThenHide());
+            }
+
+            // =========================
+            // ② Dialogue逻辑
             // =========================
             if (dialogueLines != null && dialogueLines.Length > 0)
             {
@@ -87,5 +100,15 @@ public class SphereTrigger : MonoBehaviour
     public void Advance()
     {
         currentIndex++;
+    }
+
+    // =========================
+    // Popup Panel 逻辑（新增）
+    // =========================
+    IEnumerator ShowPopupThenHide()
+    {
+        popupPanel.SetActive(true);
+        yield return new WaitForSeconds(popupDuration);
+        popupPanel.SetActive(false);
     }
 }

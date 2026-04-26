@@ -3,6 +3,8 @@ using UnityEngine;
 public class Billboard : MonoBehaviour
 {
     public Transform target;
+    public bool lockY = true;
+    public float yOffset = 180f; // ⭐ 用来修正正反
 
     void Start()
     {
@@ -18,11 +20,16 @@ public class Billboard : MonoBehaviour
 
         Vector3 direction = target.position - transform.position;
 
-        // ⭐ 只在水平旋转
-        direction.y = 0;
+        if (lockY)
+        {
+            direction.y = 0;
+        }
 
         if (direction.sqrMagnitude < 0.001f) return;
 
-        transform.rotation = Quaternion.LookRotation(direction);
+        Quaternion lookRot = Quaternion.LookRotation(direction);
+
+        // ⭐ 关键修复：翻转180度解决“背对玩家”
+        transform.rotation = lookRot * Quaternion.Euler(0, yOffset, 0);
     }
 }

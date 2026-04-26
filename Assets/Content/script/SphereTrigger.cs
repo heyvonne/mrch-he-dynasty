@@ -15,21 +15,39 @@ public class SphereTrigger : MonoBehaviour
     [Header("NPC Sync")]
     public NPCMovement npc;
 
+    [Header("NEW: Extendable Events (IMPORTANT)")]
+    public SphereTriggerEvents events;
+
     private bool hasTriggered = false;
     private bool waitingForDialogue = false;
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && !hasTriggered && index == currentIndex)
+        if (other.CompareTag("Player") &&
+            !hasTriggered &&
+            index == currentIndex)
         {
             hasTriggered = true;
 
-            // 👉 通知NPC玩家到了
+            // =========================
+            // ① NPC逻辑（不改）
+            // =========================
             if (npc != null)
             {
                 npc.PlayerArrivedAtPoint(index);
             }
 
+            // =========================
+            // ⭐ NEW：扩展事件（核心）
+            // =========================
+            if (events != null && events.onEnter != null)
+            {
+                events.onEnter.Invoke();
+            }
+
+            // =========================
+            // ② Dialogue逻辑（不改）
+            // =========================
             if (dialogueLines != null && dialogueLines.Length > 0)
             {
                 dialogueController.StartDialogue(dialogueLines);
@@ -53,7 +71,9 @@ public class SphereTrigger : MonoBehaviour
 
     void AfterDialogue()
     {
-        // 👉 sphere6：显示按钮
+        // =========================
+        // ③ Choice逻辑（不改）
+        // =========================
         if (choiceUI != null)
         {
             choiceUI.SetActive(true);

@@ -13,12 +13,19 @@ public class SphereTrigger : MonoBehaviour
     [Header("Choice (only for sphere6)")]
     public GameObject choiceUI;
 
+    [Header("Ending Choice (only for final sphere)")]
+    public GameObject endingChoiceUI;       // ← 拖入结局选择 Panel
+
     [Header("NPC Sync")]
     public NPCMovement npc;
 
     [Header("Popup Panel (auto show & hide)")]
-    public GameObject popupPanel;          // ← 拖入 ShenbaoPanel
-    public float popupDuration = 10f;      // ← 显示时长（秒）
+    public GameObject popupPanel;
+    public float popupDuration = 10f;
+
+    [Header("Guide Panel")]
+    public GameObject guidePanel;
+    public GameObject guideText;
 
     [Header("NEW: Extendable Events (IMPORTANT)")]
     public SphereTriggerEvents events;
@@ -51,11 +58,23 @@ public class SphereTrigger : MonoBehaviour
             }
 
             // =========================
-            // ④ Popup Panel（新增）
+            // ④ Popup Panel
             // =========================
             if (popupPanel != null)
             {
                 StartCoroutine(ShowPopupThenHide());
+            }
+
+            // =========================
+            // ⑤ Guide Panel
+            // =========================
+            if (guidePanel != null)
+            {
+                guidePanel.SetActive(true);
+            }
+            if (guideText != null)
+            {
+                guideText.SetActive(true);
             }
 
             // =========================
@@ -85,11 +104,18 @@ public class SphereTrigger : MonoBehaviour
     void AfterDialogue()
     {
         // =========================
-        // ③ Choice逻辑（不改）
+        // ③ 中间选项逻辑（sphere6 的 ChoiceManager）
         // =========================
         if (choiceUI != null)
         {
             choiceUI.SetActive(true);
+        }
+        // =========================
+        // ⑥ 结局选项逻辑（最后一个 sphere 的 EndingChoiceManager）
+        // =========================
+        else if (endingChoiceUI != null)
+        {
+            endingChoiceUI.SetActive(true);
         }
         else
         {
@@ -102,9 +128,6 @@ public class SphereTrigger : MonoBehaviour
         currentIndex++;
     }
 
-    // =========================
-    // Popup Panel 逻辑（新增）
-    // =========================
     IEnumerator ShowPopupThenHide()
     {
         popupPanel.SetActive(true);

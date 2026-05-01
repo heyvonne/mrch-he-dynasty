@@ -8,11 +8,13 @@ public class ChoiceManager : MonoBehaviour
     public SphereTrigger sphereTrigger;
     public Transform spawnPoint;
 
-    [Header("Choice Panels")]
-    public GameObject panelA;               // 选A时显示的图片 Panel
-    public GameObject panelB;               // 选B时显示的图片 Panel
-    public GameObject panelC;               // 选C时显示的图片 Panel
-    public float panelDuration = 5f;        // 图片显示时长（秒），ABC共用
+    [Header("Choice UI Root（三个按钮的父节点，拖入这里）")]
+    public GameObject choiceUIRoot;           // ★ 关键：只关闭这个，不关闭ChoiceManager自身
+
+    [Header("Choice Panels（ABC各自对应的图片Panel）")]
+    public GameObject panelA;
+    public GameObject panelB;
+    public GameObject panelC;
 
     private bool hasChosenCorrect = false;
     private Coroutine _currentCoroutine;
@@ -38,25 +40,39 @@ public class ChoiceManager : MonoBehaviour
         _currentCoroutine = StartCoroutine(ShowPanelThenAdvance(panelC));
     }
 
-    // A/B：显示图片 → 等待 → 回到选项
+    // A/B：隐藏选项按钮 → 显示图片 → 等待点击 → 隐藏图片 → 重新显示选项按钮
     IEnumerator ShowPanelThenReturn(GameObject panel)
     {
-        gameObject.SetActive(false);        // 隐藏选项面板
+        // ★ 只隐藏按钮UI，不关闭ChoiceManager自身（协程才能继续运行）
+        if (choiceUIRoot != null) choiceUIRoot.SetActive(false);
 
         if (panel != null) panel.SetActive(true);
-        yield return new WaitForSeconds(panelDuration);
+
+        Debug.Log("【ChoiceManager】显示Panel，等待点击关闭...");
+
+        yield return WaitForClick();
+
+        Debug.Log("【ChoiceManager】检测到点击，关闭Panel");
+
         if (panel != null) panel.SetActive(false);
 
-        gameObject.SetActive(true);         // 重新显示选项面板
+        // ★ 重新显示选项按钮，回到选择
+        if (choiceUIRoot != null) choiceUIRoot.SetActive(true);
     }
 
-    // C：显示图片 → 等待 → 继续剧情
+    // C：隐藏选项按钮 → 显示图片 → 等待点击 → 隐藏图片 → 继续剧情
     IEnumerator ShowPanelThenAdvance(GameObject panel)
     {
-        gameObject.SetActive(false);        // 隐藏选项面板
+        if (choiceUIRoot != null) choiceUIRoot.SetActive(false);
 
         if (panel != null) panel.SetActive(true);
-        yield return new WaitForSeconds(panelDuration);
+
+        Debug.Log("【ChoiceManager】选项C，等待点击继续剧情...");
+
+        yield return WaitForClick();
+
+        Debug.Log("【ChoiceManager】检测到点击，继续剧情");
+
         if (panel != null) panel.SetActive(false);
 
         // 继续后面剧情
@@ -70,6 +86,18 @@ public class ChoiceManager : MonoBehaviour
         if (sphereTrigger != null)
         {
             sphereTrigger.Advance();
+        }
+    }
+
+    // 等待玩家点击鼠标左键
+    IEnumerator WaitForClick()
+    {
+        // 先等一帧，防止刚点了选项按钮就立刻触发这里的点击
+        yield return null;
+
+        while (!Input.GetMouseButtonDown(0))
+        {
+            yield return null;
         }
     }
 }

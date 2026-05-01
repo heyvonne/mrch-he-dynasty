@@ -3,7 +3,17 @@ guid: f6859c1fe2d95f4428e72b4528588076
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tripo_mat_cad8608f
+    second: {fileID: 2100000, guid: 16a0c784abf58e642b4f119c1605fabe, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: qipaodress3dmodel_basecolor
+    second: {fileID: 2800000, guid: f6b4d35560cb4a54f9a933dfb7d4bfb1, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

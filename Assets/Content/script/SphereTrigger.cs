@@ -14,7 +14,7 @@ public class SphereTrigger : MonoBehaviour
     public GameObject choiceUI;
 
     [Header("Ending Choice (only for final sphere)")]
-    public GameObject endingChoiceUI;       // ← 拖入结局选择 Panel
+    public GameObject endingChoiceUI;
 
     [Header("NPC Sync")]
     public NPCMovement npc;
@@ -27,9 +27,6 @@ public class SphereTrigger : MonoBehaviour
     public GameObject guidePanel;
     public GameObject guideText;
 
-    [Header("NEW: Extendable Events (IMPORTANT)")]
-    public SphereTriggerEvents events;
-
     private bool hasTriggered = false;
     private bool waitingForDialogue = false;
 
@@ -41,33 +38,19 @@ public class SphereTrigger : MonoBehaviour
         {
             hasTriggered = true;
 
-            // =========================
-            // ① NPC逻辑（不改）
-            // =========================
+            // ① 通知NPC：玩家到达了
             if (npc != null)
             {
-                npc.PlayerArrivedAtPoint(index);
+                npc.PlayerArrivedAtPoint();
             }
 
-            // =========================
-            // ⭐ 扩展事件
-            // =========================
-            if (events != null && events.onEnter != null)
-            {
-                events.onEnter.Invoke();
-            }
-
-            // =========================
-            // ④ Popup Panel
-            // =========================
+            // ② Popup Panel
             if (popupPanel != null)
             {
                 StartCoroutine(ShowPopupThenHide());
             }
 
-            // =========================
-            // ⑤ Guide Panel
-            // =========================
+            // ③ Guide Panel
             if (guidePanel != null)
             {
                 guidePanel.SetActive(true);
@@ -77,9 +60,7 @@ public class SphereTrigger : MonoBehaviour
                 guideText.SetActive(true);
             }
 
-            // =========================
-            // ② Dialogue逻辑
-            // =========================
+            // ④ Dialogue
             if (dialogueLines != null && dialogueLines.Length > 0)
             {
                 dialogueController.StartDialogue(dialogueLines);
@@ -103,28 +84,31 @@ public class SphereTrigger : MonoBehaviour
 
     void AfterDialogue()
     {
-        // =========================
-        // ③ 中间选项逻辑（sphere6 的 ChoiceManager）
-        // =========================
+        // ⑤ 中间选项逻辑（sphere6）
         if (choiceUI != null)
         {
             choiceUI.SetActive(true);
         }
-        // =========================
-        // ⑥ 结局选项逻辑（最后一个 sphere 的 EndingChoiceManager）
-        // =========================
+        // ⑥ 结局选项逻辑（最后一个sphere）
         else if (endingChoiceUI != null)
         {
             endingChoiceUI.SetActive(true);
         }
         else
         {
+            // 普通sphere：对话结束 → 通知NPC → 前进
             Advance();
         }
     }
 
     public void Advance()
     {
+        // 通知NPC：对话（以及可能的选项）全部结束了
+        if (npc != null)
+        {
+            npc.OnDialogueFinished();
+        }
+
         currentIndex++;
     }
 

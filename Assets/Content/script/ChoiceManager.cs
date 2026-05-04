@@ -16,6 +16,10 @@ public class ChoiceManager : MonoBehaviour
     public GameObject panelB;
     public GameObject panelC;
 
+    public GameObject triger7Explain1;
+    public GameObject triger8Explain2;
+    public GameObject triger9Ending;
+
     private bool hasChosenCorrect = false;
     private Coroutine _currentCoroutine;
 
@@ -81,6 +85,11 @@ public class ChoiceManager : MonoBehaviour
             npc.transform.position = spawnPoint.position;
             npc.gameObject.SetActive(true);
             npc.StartMoving();
+            
+            // active triger7Explain1
+            triger7Explain1.SetActive(true);
+            triger8Explain2.SetActive(true);
+            triger9Ending.SetActive(true);
         }
 
         if (sphereTrigger != null)

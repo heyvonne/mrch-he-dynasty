@@ -36,6 +36,7 @@ public class SphereTrigger : MonoBehaviour
             !hasTriggered &&
             index == currentIndex)
         {
+            Debug.Log("Player Enter trigger");
             hasTriggered = true;
 
             // ① 通知NPC：玩家到达了

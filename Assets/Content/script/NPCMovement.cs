@@ -18,12 +18,15 @@ public class NPCMovement : MonoBehaviour
 
     // 对话结束的信号
     private bool dialogueFinished = false;
+    
+    public Animator animator;
 
     public void StartMoving()
     {
         if (!isMoving)
         {
             StartCoroutine(MoveRoutine());
+            animator.Play("Walk");
         }
     }
 
@@ -39,7 +42,16 @@ public class NPCMovement : MonoBehaviour
             while (Vector3.Distance(transform.position, target.position) > 0.2f)
             {
                 Vector3 dir = (target.position - transform.position).normalized;
-                transform.position += dir * speed * Time.deltaTime;
+                // 只移动 X 和 Z，保持 Y 不变（防止 NPC 下沉或飘起）
+                Vector3 move = dir * speed * Time.deltaTime;
+                transform.position += new Vector3(move.x, 0, move.z);
+                
+                // 让 NPC 的 Z 轴朝向移动方向
+                if (dir != Vector3.zero)
+                {
+                    transform.rotation = Quaternion.LookRotation(dir);
+                }
+                
                 yield return null;
             }
 
@@ -85,11 +97,13 @@ public class NPCMovement : MonoBehaviour
     public void PlayerArrivedAtPoint()
     {
         playerArrived = true;
+        animator.Play("Talking");
     }
 
     // SphereTrigger 在对话结束时调用
     public void OnDialogueFinished()
     {
         dialogueFinished = true;
+        animator.Play("Walk");
     }
 }
